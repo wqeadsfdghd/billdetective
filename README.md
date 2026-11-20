@@ -6,6 +6,10 @@
 
 零依赖 · 纯本地 · 单文件报告 · 数据永不出本机
 
+### 👉 [在线试用（无需安装）](https://wqeadsfdghd.github.io/billdetective/)
+
+打开就是一份完整的示例报告，想试自己的账单直接拖进去——文件不会离开你的浏览器。
+
 ![报告预览](docs/preview.png)
 
 ---
@@ -24,6 +28,10 @@
 它不上传任何东西、不要求注册、不联网。整个工具是一个 Python 包，零第三方依赖，`git clone` 之后直接就能跑。
 
 ## 30 秒上手
+
+**不想装任何东西？** 用[在线版](https://wqeadsfdghd.github.io/billdetective/)：打开网页、拖入 CSV，全程在浏览器里跑完，不上传服务器。
+
+想在本地跑：
 
 ```bash
 git clone https://github.com/wqeadsfdghd/billdetective.git
@@ -108,10 +116,13 @@ src/billdetective/
 ├── analyze.py         聚合与洞察生成
 ├── report/            HTML / 终端报告，手绘 SVG 图表
 └── cli.py             命令行入口
+docs/index.html        在线试用版（同一套算法的浏览器实现，单文件零依赖）
 tests/                 51 个单元测试
 examples/              合成示例账单 + 生成脚本
 docs/                  设计文档
 ```
+
+> 浏览器版不是另写的一套逻辑：解析、分类、订阅检测的判定规则与 Python 版一一对应，两边对同一份示例账单给出完全相同的数字（500 条记录 / 491 条有效 / 总支出 ¥40,466.52 / 7 项周期性扣款）。改动检测规则时两边要同步。
 
 ## 开发
 
@@ -127,11 +138,11 @@ python examples/generate_demo.py
 
 ## 路线图
 
+- [x] 完全离线的浏览器版（账单不出浏览器）
 - [ ] 银行 App / 信用卡账单格式
 - [ ] 「订阅涨价」检测（同一订阅价格上调）
 - [ ] 已停用但仍可能扣费的订阅提醒
 - [ ] 年度对比报告
-- [ ] 完全离线的浏览器版（账单不出浏览器）
 
 ## 许可
 
