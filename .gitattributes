@@ -1,0 +1,10 @@
+# Normalise line endings for source; keep data files byte-exact.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+
+# Statement samples are written by csv.writer with CRLF and one of them is
+# GBK-encoded — never let Git touch their contents.
+*.csv -text

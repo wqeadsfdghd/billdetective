@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>账单侦探 · 消费体检报告</title>
+<style>
+:root{
+  --ink:#1F2A27; --muted:#7A8B99; --line:#E3E9E6; --bg:#F7F9F8;
+  --brand:#0E7C66; --brand-soft:#E8F3EF; --warn:#B4553F; --warn-soft:#FBEDE8;
+  --card:#FFFFFF;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; padding:32px 20px 64px; background:var(--bg); color:var(--ink);
+  font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px; margin:0 auto}
+header.head{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:26px}
+h1{font-size:27px; margin:0 0 6px; letter-spacing:-.4px}
+.sub{color:var(--muted); font-size:13.5px; margin:0}
+.badge{
+  display:inline-flex; align-items:center; gap:6px; background:var(--brand-soft);
+  color:#0A5F4E; font-size:12.5px; font-weight:600; padding:7px 13px; border-radius:999px;
+  border:1px solid #CFE5DE; white-space:nowrap;
+}
+.kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:26px}
+.kpi{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 18px 16px}
+.kpi .label{font-size:12.5px; color:var(--muted); margin-bottom:8px}
+.kpi .value{font-size:25px; font-weight:650; letter-spacing:-.5px; font-variant-numeric:tabular-nums}
+.kpi .note{font-size:11.5px; color:var(--muted); margin-top:6px}
+.kpi.alert{background:var(--warn-soft); border-color:#F0D2C8}
+.kpi.alert .value{color:var(--warn)}
+section{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin-bottom:18px}
+section h2{font-size:16.5px; margin:0 0 4px; letter-spacing:-.2px}
+section .hint{font-size:12.5px; color:var(--muted); margin:0 0 18px}
+.insights{list-style:none; padding:0; margin:0}
+.insights li{
+  padding:12px 0 12px 26px; border-bottom:1px dashed var(--line); position:relative; font-size:14.5px;
+}
+.insights li:last-child{border-bottom:0; padding-bottom:0}
+.insights li::before{
+  content:''; position:absolute; left:4px; top:20px; width:7px; height:7px;
+  border-radius:50%; background:var(--brand);
+}
+.subs{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.sub-card{border:1px solid var(--line); border-radius:12px; padding:15px 16px; background:#FCFDFC}
+.sub-card.hidden{border-left:3px solid var(--warn); background:#FFFBFA}
+.sub-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:6px}
+.sub-name{font-weight:600; font-size:14.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.sub-amt{font-variant-numeric:tabular-nums; font-weight:600; font-size:15px; white-space:nowrap}
+.sub-meta{font-size:12.5px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap}
+.sub-annual{margin-top:9px; font-size:12.5px; color:#0A5F4E; font-weight:600}
+.pill{font-size:11px; padding:1px 7px; border-radius:999px; background:var(--brand-soft); color:#0A5F4E; font-weight:600}
+.pill.mid{background:#FFF4E5; color:#8A5A1E}
+.pill.hidden{background:var(--warn-soft); color:var(--warn)}
+.two-col{display:grid; grid-template-columns:240px 1fr; gap:26px; align-items:center}
+table{width:100%; border-collapse:collapse; font-size:13.5px}
+th{text-align:left; font-weight:600; color:var(--muted); font-size:12px; padding:8px 10px; border-bottom:1px solid var(--line)}
+td{padding:10px; border-bottom:1px solid #F0F4F2}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+.empty{color:var(--muted); font-size:13.5px; padding:14px 0}
+footer{color:var(--muted); font-size:12px; text-align:center; margin-top:30px; line-height:1.9}
+footer code{background:#EDF2F0; padding:1px 6px; border-radius:5px; font-size:11.5px}
+@media (max-width:760px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .subs{grid-template-columns:1fr}
+  .two-col{grid-template-columns:1fr}
+  body{padding:20px 14px 48px}
+}
+@media print{
+  body{background:#fff; padding:0}
+  section,.kpi{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div>
+      <h1>账单侦探 · 消费体检报告</h1>
+      <p class="sub">账单周期 2026-06-01 至 2026-11-28 · 来源 alipay_demo_2026H2.csv、wechat_demo_2026H2.csv</p>
+    </div>
+    <span class="badge">全程本地处理 · 数据未离开本机</span>
+  </header>
+
+  
+    <div class="kpis">
+      <div class="kpi">
+        <div class="label">总支出</div>
+        <div class="value">¥40,466.52</div>
+        <div class="note">月均 ¥6,744.42</div>
+      </div>
+      <div class="kpi">
+        <div class="label">总收入</div>
+        <div class="value">¥89,964.19</div>
+        <div class="note">净结余 ¥49,497.67</div>
+      </div>
+      <div class="kpi alert"><div class="label">隐形订阅年化</div><div class="value">¥912</div><div class="note">4 项自动续费</div></div>
+      <div class="kpi">
+        <div class="label">有效交易</div>
+        <div class="value">491</div>
+        <div class="note">已排除退款/关闭 9 笔</div>
+      </div>
+    </div>
+    
+
+  <section>
+    <h2>先说结论</h2>
+    <p class="hint">由账单自动归纳，不含推测</p>
+    <ul class="insights"><li>检测到 4 项隐形订阅，按年计算共需 ¥912，其中「腾讯视频」最贵，年化 ¥360。</li><li>支出最高的月份是 2026-10，共 ¥7,180。</li><li>「住房租物」占了总支出的 47%，是最大的钱袋子。</li><li>单笔最大支出是 2026-06-05 的「房东张先生」，¥3,200。</li></ul>
+  </section>
+
+  <section>
+    <h2>订阅与固定扣款</h2>
+    <p class="hint">基于扣款间隔与金额稳定性推断，把握中等的项建议自行核对</p>
+    <h2 style="font-size:14.5px;margin:0 0 12px;color:var(--warn)">隐形订阅 · 4 项 · 年化 ¥912</h2><div class="subs">
+    <div class="sub-card hidden">
+      <div class="sub-top">
+        <span class="sub-name">腾讯视频</span>
+        <span class="sub-amt">¥30</span>
+      </div>
+      <div class="sub-meta">
+        <span>每月扣款</span>
+        <span>已扣 6 次</span>
+        <span>2026-06 起</span>
+        <span class="pill">把握高</span>
+        <span class="pill hidden">隐形订阅</span>
+      </div>
+      <div class="sub-annual">年化 ¥360 · 下次约 12-08</div>
+    </div>
+    
+    <div class="sub-card hidden">
+      <div class="sub-top">
+        <span class="sub-name">爱奇艺</span>
+        <span class="sub-amt">¥25</span>
+      </div>
+      <div class="sub-meta">
+        <span>每月扣款</span>
+        <span>已扣 6 次</span>
+        <span>2026-06 起</span>
+        <span class="pill">把握高</span>
+        <span class="pill hidden">隐形订阅</span>
+      </div>
+      <div class="sub-annual">年化 ¥300 · 下次约 12-15</div>
+    </div>
+    
+    <div class="sub-card hidden">
+      <div class="sub-top">
+        <span class="sub-name">网易云音乐</span>
+        <span class="sub-amt">¥15</span>
+      </div>
+      <div class="sub-meta">
+        <span>每月扣款</span>
+        <span>已扣 6 次</span>
+        <span>2026-06 起</span>
+        <span class="pill">把握高</span>
+        <span class="pill hidden">隐形订阅</span>
+      </div>
+      <div class="sub-annual">年化 ¥180 · 下次约 12-20</div>
+    </div>
+    
+    <div class="sub-card hidden">
+      <div class="sub-top">
+        <span class="sub-name">Apple</span>
+        <span class="sub-amt">¥6</span>
+      </div>
+      <div class="sub-meta">
+        <span>每月扣款</span>
+        <span>已扣 6 次</span>
+        <span>2026-06 起</span>
+        <span class="pill">把握高</span>
+        <span class="pill hidden">隐形订阅</span>
+      </div>
+      <div class="sub-annual">年化 ¥72 · 下次约 12-03</div>
+    </div>
+    </div><h2 style="font-size:14.5px;margin:22px 0 12px;color:var(--muted)">周期性固定账单 · 3 项</h2><div class="subs">
+    <div class="sub-card">
+      <div class="sub-top">
+        <span class="sub-name">房东张先生</span>
+        <span class="sub-amt">¥3,200</span>
+      </div>
+      <div class="sub-meta">
+        <span>每月扣款</span>
+        <span>已扣 6 次</span>
+        <span>2026-06 起</span>
+        <span class="pill">把握高</span>
+        
+      </div>
+      <div class="sub-annual">年化 ¥38,400 · 下次约 12-05</div>
+    </div>
+    
+    <div class="sub-card">
+      <div class="sub-top">
+        <span class="sub-name">乐刻健身</span>
+        <span class="sub-amt">¥199</span>
+      </div>
+      <div class="sub-meta">
+        <span>每月扣款</span>
+        <span>已扣 6 次</span>
+        <span>2026-06 起</span>
+        <span class="pill">把握高</span>
+        
+      </div>
+      <div class="sub-annual">年化 ¥2,388 · 下次约 12-01</div>
+    </div>
+    
+    <div class="sub-card">
+      <div class="sub-top">
+        <span class="sub-name">中国移动</span>
+        <span class="sub-amt">¥59</span>
+      </div>
+      <div class="sub-meta">
+        <span>每月扣款</span>
+        <span>已扣 6 次</span>
+        <span>2026-06 起</span>
+        <span class="pill">把握高</span>
+        
+      </div>
+      <div class="sub-annual">年化 ¥708 · 下次约 12-12</div>
+    </div>
+    </div>
+  </section>
+
+  <section><h2>月度支出趋势</h2><p class="hint">按自然月汇总的支出金额</p><svg viewBox="0 0 760 260" width="100%" role="img" aria-label="月度支出趋势" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0E7C66" stop-opacity="0.95"/><stop offset="100%" stop-color="#0E7C66" stop-opacity="0.55"/></linearGradient></defs><line x1="12" y1="179.0" x2="748" y2="179.0" stroke="#E3E9E6" stroke-width="1" stroke-dasharray="3 4"/><line x1="12" y1="128.0" x2="748" y2="128.0" stroke="#E3E9E6" stroke-width="1" stroke-dasharray="3 4"/><line x1="12" y1="77.0" x2="748" y2="77.0" stroke="#E3E9E6" stroke-width="1" stroke-dasharray="3 4"/><line x1="12" y1="26.0" x2="748" y2="26.0" stroke="#E3E9E6" stroke-width="1" stroke-dasharray="3 4"/><rect x="19.0" y="34.5" width="108.7" height="195.5" rx="4" fill="url(#barGrad)"/><text x="73.3" y="27.5" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="10" fill="#5C6B73">6,882</text><text x="73.3" y="248.0" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#7A8B99">6月</text><rect x="141.7" y="37.8" width="108.7" height="192.2" rx="4" fill="url(#barGrad)"/><text x="196.0" y="30.8" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="10" fill="#5C6B73">6,766</text><text x="196.0" y="248.0" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#7A8B99">7月</text><rect x="264.3" y="55.7" width="108.7" height="174.3" rx="4" fill="url(#barGrad)"/><text x="318.7" y="48.7" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="10" fill="#5C6B73">6,136</text><text x="318.7" y="248.0" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#7A8B99">8月</text><rect x="387.0" y="36.6" width="108.7" height="193.4" rx="4" fill="url(#barGrad)"/><text x="441.3" y="29.6" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="10" fill="#5C6B73">6,807</text><text x="441.3" y="248.0" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#7A8B99">9月</text><rect x="509.7" y="26.0" width="108.7" height="204.0" rx="4" fill="url(#barGrad)"/><text x="564.0" y="19.0" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="10" fill="#5C6B73">7,180</text><text x="564.0" y="248.0" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#7A8B99">10月</text><rect x="632.3" y="39.8" width="108.7" height="190.2" rx="4" fill="url(#barGrad)"/><text x="686.7" y="32.8" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="10" fill="#5C6B73">6,696</text><text x="686.7" y="248.0" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#7A8B99">11月</text><line x1="12" y1="230" x2="748" y2="230" stroke="#C9D6D1" stroke-width="1.5"/></svg></section>
+  
+        <section>
+          <h2>支出构成</h2>
+          <p class="hint">占比前 8 的消费分类</p>
+          <div class="two-col"><svg viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="支出分类占比" xmlns="http://www.w3.org/2000/svg"><circle cx="110.0" cy="110.0" r="95.0" fill="none" stroke="#EDF2F0" stroke-width="26"/><circle cx="110.0" cy="110.0" r="95.0" fill="none" stroke="#0E7C66" stroke-width="26" stroke-dasharray="284.62 312.29" stroke-dashoffset="-0.00" transform="rotate(-90 110.0 110.0)" stroke-linecap="butt"/><circle cx="110.0" cy="110.0" r="95.0" fill="none" stroke="#F2994A" stroke-width="26" stroke-dasharray="118.85 478.05" stroke-dashoffset="-284.62" transform="rotate(-90 110.0 110.0)" stroke-linecap="butt"/><circle cx="110.0" cy="110.0" r="95.0" fill="none" stroke="#3E7CB1" stroke-width="26" stroke-dasharray="81.56 515.34" stroke-dashoffset="-403.47" transform="rotate(-90 110.0 110.0)" stroke-linecap="butt"/><circle cx="110.0" cy="110.0" r="95.0" fill="none" stroke="#B4553F" stroke-width="26" stroke-dasharray="42.82 554.09" stroke-dashoffset="-485.03" transform="rotate(-90 110.0 110.0)" stroke-linecap="butt"/><circle cx="110.0" cy="110.0" r="95.0" fill="none" stroke="#6B8E5A" stroke-width="26" stroke-dasharray="28.10 568.80" stroke-dashoffset="-527.84" transform="rotate(-90 110.0 110.0)" stroke-linecap="butt"/><circle cx="110.0" cy="110.0" r="95.0" fill="none" stroke="#8E6BA8" stroke-width="26" stroke-dasharray="17.70 579.20" stroke-dashoffset="-555.95" transform="rotate(-90 110.0 110.0)" stroke-linecap="butt"/><circle cx="110.0" cy="110.0" r="95.0" fill="none" stroke="#C9A227" stroke-width="26" stroke-dasharray="16.49 580.41" stroke-dashoffset="-573.65" transform="rotate(-90 110.0 110.0)" stroke-linecap="butt"/><circle cx="110.0" cy="110.0" r="95.0" fill="none" stroke="#4F8A8B" stroke-width="26" stroke-dasharray="6.76 590.14" stroke-dashoffset="-590.14" transform="rotate(-90 110.0 110.0)" stroke-linecap="butt"/><text x="110.0" y="106.0" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" fill="#7A8B99">总支出</text><text x="110.0" y="130.0" text-anchor="middle" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="19" font-weight="600" fill="#1F2A27">¥4.0万</text></svg><div><svg viewBox="0 0 760 280" width="100%" role="img" aria-label="分类金额" xmlns="http://www.w3.org/2000/svg"><text x="0" y="21" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" fill="#3A4744">住房租物</text><rect x="92" y="9" width="582" height="16" rx="8" fill="#EDF2F0"/><rect x="92" y="9" width="582.0" height="16" rx="8" fill="#0E7C66"/><text x="760" y="21" text-anchor="end" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" font-weight="500" fill="#1F2A27">¥19,200</text><text x="0" y="55" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" fill="#3A4744">餐饮美食</text><rect x="92" y="43" width="582" height="16" rx="8" fill="#EDF2F0"/><rect x="92" y="43" width="243.0" height="16" rx="8" fill="#F2994A"/><text x="760" y="55" text-anchor="end" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" font-weight="500" fill="#1F2A27">¥8,018</text><text x="0" y="89" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" fill="#3A4744">日用购物</text><rect x="92" y="77" width="582" height="16" rx="8" fill="#EDF2F0"/><rect x="92" y="77" width="166.8" height="16" rx="8" fill="#3E7CB1"/><text x="760" y="89" text-anchor="end" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" font-weight="500" fill="#1F2A27">¥5,502</text><text x="0" y="123" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" fill="#3A4744">服饰美妆</text><rect x="92" y="111" width="582" height="16" rx="8" fill="#EDF2F0"/><rect x="92" y="111" width="87.6" height="16" rx="8" fill="#B4553F"/><text x="760" y="123" text-anchor="end" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" font-weight="500" fill="#1F2A27">¥2,888</text><text x="0" y="157" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" fill="#3A4744">交通出行</text><rect x="92" y="145" width="582" height="16" rx="8" fill="#EDF2F0"/><rect x="92" y="145" width="57.5" height="16" rx="8" fill="#6B8E5A"/><text x="760" y="157" text-anchor="end" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" font-weight="500" fill="#1F2A27">¥1,896</text><text x="0" y="191" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" fill="#3A4744">休闲娱乐</text><rect x="92" y="179" width="582" height="16" rx="8" fill="#EDF2F0"/><rect x="92" y="179" width="36.2" height="16" rx="8" fill="#8E6BA8"/><text x="760" y="191" text-anchor="end" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" font-weight="500" fill="#1F2A27">¥1,194</text><text x="0" y="225" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" fill="#3A4744">生活缴费</text><rect x="92" y="213" width="582" height="16" rx="8" fill="#EDF2F0"/><rect x="92" y="213" width="33.7" height="16" rx="8" fill="#C9A227"/><text x="760" y="225" text-anchor="end" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" font-weight="500" fill="#1F2A27">¥1,113</text><text x="0" y="259" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" fill="#3A4744">订阅服务</text><rect x="92" y="247" width="582" height="16" rx="8" fill="#EDF2F0"/><rect x="92" y="247" width="13.8" height="16" rx="8" fill="#4F8A8B"/><text x="760" y="259" text-anchor="end" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif" font-size="12" font-weight="500" fill="#1F2A27">¥456</text></svg></div></div>
+        </section>
+        
+  
+        <section>
+          <h2>花钱最多的商户</h2>
+          <p class="hint">按累计支出排序</p>
+          <table>
+            <thead><tr><th>#</th><th>商户</th><th class="num">笔数</th><th class="num">金额</th></tr></thead>
+            <tbody><tr><td>1</td><td>房东张先生</td><td class="num">6</td><td class="num">¥19,200</td></tr><tr><td>2</td><td>优衣库</td><td class="num">12</td><td class="num">¥2,888.29</td></tr><tr><td>3</td><td>全家便利店</td><td class="num">11</td><td class="num">¥2,413.71</td></tr><tr><td>4</td><td>盒马鲜生</td><td class="num">7</td><td class="num">¥1,722.95</td></tr><tr><td>5</td><td>永辉超市</td><td class="num">8</td><td class="num">¥1,365.48</td></tr><tr><td>6</td><td>滴滴出行</td><td class="num">36</td><td class="num">¥1,271.12</td></tr><tr><td>7</td><td>乐刻健身</td><td class="num">6</td><td class="num">¥1,194</td></tr><tr><td>8</td><td>公司食堂</td><td class="num">40</td><td class="num">¥1,079.28</td></tr></tbody>
+          </table>
+        </section>
+        
+  
+        <section>
+          <h2>单笔最大支出</h2>
+          <p class="hint">Top 5，金额从高到低</p>
+          <table>
+            <thead><tr><th>日期</th><th>商户</th><th>分类</th><th class="num">金额</th></tr></thead>
+            <tbody><tr><td>2026-06-05</td><td>房东张先生</td><td>住房租物</td><td class="num">¥3,200</td></tr><tr><td>2026-10-06</td><td>优衣库</td><td>服饰美妆</td><td class="num">¥460.50</td></tr><tr><td>2026-06-02</td><td>全家便利店</td><td>日用购物</td><td class="num">¥313.72</td></tr><tr><td>2026-09-11</td><td>盒马鲜生</td><td>日用购物</td><td class="num">¥308.85</td></tr><tr><td>2026-07-16</td><td>永辉超市</td><td>日用购物</td><td class="num">¥305.94</td></tr></tbody>
+          </table>
+        </section>
+        
+
+  <footer>
+    由 <code>billdetective</code> 生成于 2026-11-20 17:10 · 单文件离线报告，无任何外部请求<br>
+    报告包含敏感财务信息，分享前请自行评估
+  </footer>
+</div>
+</body>
+</html>
